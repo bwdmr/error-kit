@@ -60,7 +60,7 @@ public final class Backing<Source: Codable & Sendable>: Codable, Sendable {
 ///       }
 ///     }
 ///
-public protocol ErrorKitError: Sendable, Codable {
+public protocol ErrorKitError: Sendable, Codable, Error {
   static var name: String { get }
   associatedtype Source: Codable & Sendable
 }
