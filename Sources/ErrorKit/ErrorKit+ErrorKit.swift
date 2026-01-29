@@ -13,20 +13,20 @@ import Foundation
 ///       public static let generic = Self(.generic)
 ///     }
 ///
-public protocol Source: Codable, Sendable, Hashable, CustomStringConvertible {
+public protocol ErrorKitSource: Codable, Sendable, Hashable, CustomStringConvertible {
   associatedtype CaseType: RawRepresentable, Codable, Sendable, Hashable where CaseType.RawValue == String
   
   var base: CaseType { get }
   init(_ base: CaseType)
 }
 
-extension Source {
+extension ErrorKitSource {
   public var description: String {
     base.rawValue
   }
 }
 
-public final class Backing<Source: Codable & Sendable>: Codable, Sendable {
+public final class ErrorKitBacking<Source: Codable & Sendable>: Codable, Sendable {
   fileprivate let type: String
   fileprivate let source: Source
   fileprivate let timestamp: Int64?
@@ -69,7 +69,7 @@ public struct ErrorKitWrapper<E: ErrorKitError>: ErrorKitError, Sendable, Codabl
   public static var name: String { E.name }
   public typealias Source = E.Source
   
-  public let backing: Backing<Source>
+  public let backing: ErrorKitBacking<Source>
   
   public var type: String { backing.type }
   public var source: Source { backing.source }
@@ -82,7 +82,7 @@ public struct ErrorKitWrapper<E: ErrorKitError>: ErrorKitError, Sendable, Codabl
     timestamp: Int64? = nil,
     reason: String? = nil
   ) {
-    self.backing = Backing(
+    self.backing = ErrorKitBacking(
       type: type,
       source: source,
       timestamp: timestamp,
@@ -90,7 +90,7 @@ public struct ErrorKitWrapper<E: ErrorKitError>: ErrorKitError, Sendable, Codabl
     )
   }
   
-  public init(backing: Backing<Source>) {
+  public init(backing: ErrorKitBacking<Source>) {
     self.backing = backing
   }
   
